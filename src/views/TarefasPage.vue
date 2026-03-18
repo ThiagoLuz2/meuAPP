@@ -5,21 +5,24 @@
         <ion-title>Tarefas a fazer</ion-title>
       </ion-toolbar>
     </ion-header>
-
+    
     <ion-content :fullscreen="true"> 
       <div class="tarefa-container">
         <div class="input-group">
           <ion-input 
             v-model="novaTarefa" 
+            :error-text="erroTarefa"
+            :class="{'ion-invalid ion-touched': erroTarefa}"
             placeholder="Digite uma nova tarefa..."
             @keyup.enter="adicionarTarefa"
-          ></ion-input>
-          <ion-button @click="adicionarTarefa" color="success">
-            + Adicionar
+          ></ion-input >
+          <ion-button @click="adicionarTarefa" color="success" fill="solid" expand="block" slot="end  ">
+          <ion-icon :icon="addOutline"></ion-icon> Adicionar
           </ion-button>
         </div>
-
-        <ion-list v-if="tarefas.length > 0" class="lista-tarefas">
+        
+        <ion-card v-if="tarefas.length > 0" class="lista-tarefas">
+          
           <ion-item v-for="(tarefa, index) in tarefas" :key="index" class="tarefa-item">
             <ion-label>{{ tarefa }}</ion-label>
             <ion-button 
@@ -27,11 +30,11 @@
               color="danger" 
               @click="removerTarefa(index)"
               size="small"
-            >
+            ><ion-icon :icon="trashOutline"></ion-icon>
               Remover
             </ion-button>
           </ion-item>
-        </ion-list>
+        </ion-card>
 
         <div v-else class="vazio">
           <p>Nenhuma tarefa adicionada. Adicione uma para começar!</p>
@@ -45,7 +48,7 @@
         </ion-toolbar>
         
       </ion-header>
-
+      
       <IonButton @click="router.push('/Home')">voltar</IonButton>
   </ion-page>
 
@@ -54,12 +57,20 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import router from '@/router';
-import { IonContent, IonHeader, IonPage, IonButton, IonTitle, IonToolbar, IonInput, IonList, IonItem, IonLabel } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonIcon, IonCard, IonButton, IonTitle, IonToolbar, IonInput, IonItem, IonLabel } from '@ionic/vue';
+import { addOutline, trashOutline} from 'ionicons/icons';
 
 const novaTarefa = ref('');
 const tarefas = ref<string[]>([]);
+const erroTarefa = computed(() => {
+  if (!novaTarefa.value.trim()) 
+    return 'campo obrigatório';
+  if (novaTarefa.value.length > 80)
+  return 'maximo 80 CARACTERES'
+ return '';
+})
 
 const adicionarTarefa = () => {
   if (novaTarefa.value.trim()) {
