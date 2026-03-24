@@ -11,24 +11,22 @@
         <div class="input-group">
           <ion-input 
             v-model="novaTarefa" 
-            :error-text="erroTarefa"
-            :class="{'ion-invalid ion-touched': erroTarefa}"
             placeholder="Digite uma nova tarefa..."
-            @keyup.enter="adicionarTarefa"
+            @keyup.enter="adicionarNova"
           ></ion-input >
-          <ion-button @click="adicionarTarefa" color="success" fill="solid" expand="block" slot="end  ">
+          <ion-button @click="adicionarNova" color= "success" fill="solid" expand="block" slot="end  ">
           <ion-icon :icon="addOutline"></ion-icon> Adicionar
           </ion-button>
         </div>
         
         <ion-card v-if="tarefas.length > 0" class="lista-tarefas">
           
-          <ion-item v-for="(tarefa, index) in tarefas" :key="index" class="tarefa-item">
-            <ion-label>{{ tarefa }}</ion-label>
+          <ion-item v-for="tarefa in tarefas" :key="tarefa.id" class="tarefa-item">
+            <ion-label>{{ tarefa.texto }}</ion-label>
             <ion-button 
               slot="end" 
               color="danger" 
-              @click="removerTarefa(index)"
+              @click="remover(tarefa.id)"
               size="small"
             ><ion-icon :icon="trashOutline"></ion-icon>
               Remover
@@ -46,9 +44,9 @@
           <ion-title>Tarefas a fazer</ion-title>
           
         </ion-toolbar>
-        
+         
       </ion-header>
-      
+      <Stars :total="3"></Stars>
       <IonButton @click="router.push('/Home')">voltar</IonButton>
   </ion-page>
 
@@ -57,31 +55,23 @@
 
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import router from '@/router';
 import { IonContent, IonHeader, IonPage, IonIcon, IonCard, IonButton, IonTitle, IonToolbar, IonInput, IonItem, IonLabel } from '@ionic/vue';
 import { addOutline, trashOutline} from 'ionicons/icons';
+import {useTarefas} from '@/composable/useTarefas';
 
-const novaTarefa = ref('');
-const tarefas = ref<string[]>([]);
-const erroTarefa = computed(() => {
-  if (!novaTarefa.value.trim()) 
-    return 'campo obrigatório';
-  if (novaTarefa.value.length > 80)
-  return 'maximo 80 CARACTERES'
- return '';
-})
+const { tarefas, adicionar, remover } = useTarefas()
+const novaTarefa = ref('')
+function adicionarNova() {
+  adicionar(novaTarefa.value)
+  novaTarefa.value = ''
+}
 
-const adicionarTarefa = () => {
-  if (novaTarefa.value.trim()) {
-    tarefas.value.push(novaTarefa.value.trim());
-    novaTarefa.value = '';
-  }
-};
 
-const removerTarefa = (index: number) => {
-  tarefas.value.splice(index, 1);
-};
+
+
+
 
 
 
