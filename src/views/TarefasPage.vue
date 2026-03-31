@@ -1,53 +1,40 @@
 <template>
-    <ion-page>
+  <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-title>Tarefas a fazer</ion-title>
       </ion-toolbar>
     </ion-header>
-    
-    <ion-content :fullscreen="true"> 
+
+    <ion-content :fullscreen="true">
       <div class="tarefa-container">
         <div class="input-group">
-          <ion-input 
-            v-model="novaTarefa" 
-            placeholder="Digite uma nova tarefa..."
-            @keyup.enter="adicionarNova"
-          ></ion-input >
-          <ion-button @click="adicionarNova" color= "success" fill="solid" expand="block" slot="end  ">
-          <ion-icon :icon="addOutline"></ion-icon> Adicionar
+          <ion-input v-model="novaTarefa" placeholder="Digite uma nova tarefa..."
+            @keyup.enter="adicionarNova"></ion-input>
+          <ion-button @click="adicionarNova" color="success" fill="solid" expand="block" slot="end">
+            <ion-icon :icon="addOutline"></ion-icon> Adicionar
           </ion-button>
         </div>
-        
-        <ion-card v-if="tarefas.length > 0" class="lista-tarefas">
-          
-          <ion-item v-for="tarefa in tarefas" :key="tarefa.id" class="tarefa-item">
-            <ion-label>{{ tarefa.texto }}</ion-label>
-            <ion-button 
-              slot="end" 
-              color="danger" 
-              @click="remover(tarefa.id)"
-              size="small"
-            ><ion-icon :icon="trashOutline"></ion-icon>
-              Remover
-            </ion-button>
-          </ion-item>
-        </ion-card>
 
-        <div v-else class="vazio">
-          <p>Nenhuma tarefa adicionada. Adicione uma para começar!</p>
+        <template v-if="filtradas.length > 0">
+          <CardTarefa v-for="tarefa in tarefas" :key="tarefa.id" :tarefa="tarefa" @remover="remover"
+            @concluir="concluir"></CardTarefa>
+
+        </template>
+        <div class="vazio" v-else>
+          <p>Não há tarefas para mostrar.</p>
         </div>
       </div>
     </ion-content>
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title>Tarefas a fazer</ion-title>
-          
-        </ion-toolbar>
-         
-      </ion-header>
-      <Stars :total="3"></Stars>
-      <IonButton @click="router.push('/Home')">voltar</IonButton>
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title>Tarefas a fazer</ion-title>
+
+      </ion-toolbar>
+
+    </ion-header>
+
+    <IonButton @click="router.push('/Home')">voltar</IonButton>
   </ion-page>
 
 
@@ -57,22 +44,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import router from '@/router';
-import { IonContent, IonHeader, IonPage, IonIcon, IonCard, IonButton, IonTitle, IonToolbar, IonInput, IonItem, IonLabel } from '@ionic/vue';
-import { addOutline, trashOutline} from 'ionicons/icons';
-import {useTarefas} from '@/composable/useTarefas';
+import { IonContent, IonHeader, IonPage, IonIcon, IonButton, IonTitle, IonToolbar, IonInput } from '@ionic/vue';
+import { addOutline } from 'ionicons/icons';
+import CardTarefa from '../components/CardTarefa.vue';
+import { useTarefas } from '../composable/useTarefas';
 
-const { tarefas, adicionar, remover } = useTarefas()
+const {tarefas, filtradas, adicionar, remover, concluir } = useTarefas()
 const novaTarefa = ref('')
 function adicionarNova() {
   adicionar(novaTarefa.value)
   novaTarefa.value = ''
 }
-
-
-
-
-
-
 
 
 </script>
@@ -115,7 +97,7 @@ ion-input {
 
 #container {
   text-align: center;
-  
+
   position: absolute;
   left: 0;
   right: 0;
@@ -131,9 +113,9 @@ ion-input {
 #container p {
   font-size: 16px;
   line-height: 22px;
-  
+
   color: #8c8c8c;
-  
+
   margin: 0;
 }
 
