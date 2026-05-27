@@ -1,58 +1,91 @@
 <template>
-  <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Trabalho do Thiago</ion-title>
-      </ion-toolbar>
-    </ion-header>
+  <IonPage>
+    <IonHeader translucent>
+      <IonToolbar>
+        <IonTitle>Perfil</IonTitle>
+      </IonToolbar>
+    </IonHeader>
 
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-        
-      </ion-header>
-      
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <ion-button @click="router.push('/tabs/tarefas')"> Clica ai</ion-button>
-        </div>
-    </ion-content>
-  </ion-page>
+    <IonContent class="ion-padding">
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Seu perfil</IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent>
+          <p v-if="nome">Olá, <strong>{{ nome }}</strong></p>
+          <p v-else>Ainda não há nome definido.</p>
+        </IonCardContent>
+      </IonCard>
+
+      <IonItem>
+        <IonLabel position="stacked">Nome</IonLabel>
+        <IonInput v-model="nomeInput" placeholder="Digite seu nome" />
+      </IonItem>
+
+      <div class="actions">
+        <IonButton expand="block" color="primary" @click="salvar">Salvar</IonButton>
+        <IonButton expand="block" fill="outline" color="danger" @click="limpar">Limpar</IonButton>
+      </div>
+    </IonContent>
+  </IonPage>
 </template>
 
 <script setup lang="ts">
-import router from '@/router';
-import { IonContent, IonHeader, IonPage, IonButton, IonTitle, IonToolbar,  } from '@ionic/vue';
+import { ref, computed } from 'vue';
+import { useUsuarioStore } from '../stores/usuario';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  alertController
+} from '@ionic/vue';
+
+const store = useUsuarioStore();
+const nome = computed(() => store.nome);
+const nomeInput = ref<string>(store.nome ?? '');
+
+async function salvar() {
+  if (!nomeInput.value || !nomeInput.value.trim()) return;
+  store.setNome(nomeInput.value.trim());
+  const alert = await alertController.create({
+    header: 'Salvo',
+    message: 'Nome salvo com sucesso.',
+    buttons: ['OK']
+  });
+  await alert.present();
+}
+
+async function limpar() {
+  store.clear();
+  nomeInput.value = '';
+  const alert = await alertController.create({
+    header: 'Removido',
+    message: 'Nome removido.',
+    buttons: ['OK']
+  });
+  await alert.present();
+}
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+p {
+  margin: 0 0 8px 0;
 }
 </style>

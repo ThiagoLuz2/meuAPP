@@ -12,10 +12,15 @@ const routes = [
     children: [
       { path: '', redirect: '/tabs/home' },
       { path: 'home', component: () => import('../views/HomePage.vue') },
+      {
+        path: 'perfil',
+        component: () => import('../views/PerfilPage.vue')
+      },
       { path: 'tarefas', component: () => import('../views/TarefasPage.vue') },
       { path: 'tarefas/:id', component: () => import('../views/DetalhesPage.vue') }
     ]
   }
+  
 ]
 
 const router = createRouter({

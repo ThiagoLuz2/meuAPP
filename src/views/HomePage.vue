@@ -1,30 +1,29 @@
 <template>
-  <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Trabalho do Thiago</ion-title>
-      </ion-toolbar>
-    </ion-header>
+  <IonPage>
+    <IonHeader :translucent="true">
+      <IonToolbar>
+        <IonTitle>Trabalho do Thiago</IonTitle>
+      </IonToolbar>
+    </IonHeader>
 
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-        
-      </ion-header>
-      
+    <IonContent :fullscreen="true">
+      <IonHeader collapse="condense">
+        <IonToolbar>
+          <IonTitle size="large">Blank</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+
       <div id="container">
         <strong>Ready to create an app?</strong>
-        <ion-button @click="router.push('/tabs/tarefas')"> Clica ai</ion-button>
-        </div>
-    </ion-content>
-  </ion-page>
+        <IonButton @click="router.push('/tabs/tarefas')"> Clica ai</IonButton>
+      </div>
+    </IonContent>
+  </IonPage>
 </template>
 
 <script setup lang="ts">
 import router from '@/router';
-import { IonContent, IonHeader, IonPage, IonButton, IonTitle, IonToolbar,  } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonButton, IonTitle, IonToolbar } from '@ionic/vue';
 </script>
 
 <style scoped>
