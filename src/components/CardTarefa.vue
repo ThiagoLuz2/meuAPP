@@ -30,9 +30,7 @@ import {
     IonCard,
     IonButton,
 } from '@ionic/vue';
-import { // checkmarkDoneOutline, ellipseOutline
-    trashOutline
-} from 'ionicons/icons';
+import { trashOutline} from 'ionicons/icons';
 interface Tarefa {
     id: number;
     texto: string;

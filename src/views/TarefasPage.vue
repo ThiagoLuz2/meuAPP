@@ -34,7 +34,7 @@
 
     </ion-header>
 
-    <IonButton @click="router.push('/Home')">voltar</IonButton>
+    <IonButton @click="router.push('/tabs/home')">voltar</IonButton>
   </ion-page>
 
 
