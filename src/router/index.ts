@@ -1,26 +1,40 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
+import { useUsuarioStore } from '../stores/usuario';
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/tabs/home'
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: () => import('../views/HomePage.vue')
-  },
-  {
-    path: '/Tarefas',
-    name: 'Tarefas',
-    component: () => import('../views/TarefasPage.vue')
+    path: '/tabs',
+    component: () => import('../views/TabsPage.vue'),
+    children: [
+      { path: '', redirect: '/tabs/home' },
+      { path: 'home', component: () => import('../views/HomePage.vue') },
+      {
+        path: 'perfil',
+        component: () => import('../views/PerfilPage.vue')
+      },
+      { path: 'tarefas', component: () => import('../views/TarefasPage.vue') },
+      { path: 'tarefas/:id', component: () => import('../views/DetalhesPage.vue') }
+    ]
   }
+  
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, _, next) => {
+  const usuStore = useUsuarioStore()
+  if (to.meta.requerNome && !usuStore.nome) {
+    next('/tabs/tarefas')
+  } else {
+    next()
+  }
 })
 
 export default router

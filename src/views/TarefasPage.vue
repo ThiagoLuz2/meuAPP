@@ -1,81 +1,81 @@
 <template>
-    <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Tarefas a fazer</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    
-    <ion-content :fullscreen="true"> 
+  <IonPage>
+    <IonHeader translucent>
+      <IonToolbar>
+        <IonTitle>Tarefas a fazer</IonTitle>
+      </IonToolbar>
+    </IonHeader>
+
+    <IonContent fullscreen>
       <div class="tarefa-container">
         <div class="input-group">
-          <ion-input 
-            v-model="novaTarefa" 
+          <IonInput
+            v-model="novaTarefa"
             placeholder="Digite uma nova tarefa..."
             @keyup.enter="adicionarNova"
-          ></ion-input >
-          <ion-button @click="adicionarNova" color= "success" fill="solid" expand="block" slot="end  ">
-          <ion-icon :icon="addOutline"></ion-icon> Adicionar
-          </ion-button>
+          />
+          <IonButton @click="adicionarNova" color="success" fill="solid" expand="block">
+            <IonIcon :icon="addOutline" /> Adicionar
+          </IonButton>
         </div>
-        
-        <ion-card v-if="tarefas.length > 0" class="lista-tarefas">
-          
-          <ion-item v-for="tarefa in tarefas" :key="tarefa.id" class="tarefa-item">
-            <ion-label>{{ tarefa.texto }}</ion-label>
-            <ion-button 
-              slot="end" 
-              color="danger" 
-              @click="remover(tarefa.id)"
-              size="small"
-            ><ion-icon :icon="trashOutline"></ion-icon>
-              Remover
-            </ion-button>
-          </ion-item>
-        </ion-card>
 
-        <div v-else class="vazio">
-          <p>Nenhuma tarefa adicionada. Adicione uma para começar!</p>
+        <template v-if="filtradas.length > 0">
+          <div class="lista-tarefas">
+            <div v-for="tarefa in filtradas" :key="tarefa.id" class="tarefa-item">
+              <CardTarefa
+                :tarefa="tarefa"
+                @remover="remover"
+                @concluir="concluir"
+              />
+              <IonButton expand="block" fill="outline" @click="abrirDetalhes(tarefa.id)">
+                Ver detalhes
+              </IonButton>
+            </div>
+          </div>
+        </template>
+
+        <div class="vazio" v-else>
+          <p>Não há tarefas para mostrar.</p>
         </div>
       </div>
-    </ion-content>
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title>Tarefas a fazer</ion-title>
-          
-        </ion-toolbar>
-         
-      </ion-header>
-      <Stars :total="3"></Stars>
-      <IonButton @click="router.push('/Home')">voltar</IonButton>
-  </ion-page>
+    </IonContent>
 
-
+    <IonButton @click="router.push('/tabs/home')">voltar</IonButton>
+  </IonPage>
 </template>
-
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useIonRouter } from '@ionic/vue';
 import router from '@/router';
-import { IonContent, IonHeader, IonPage, IonIcon, IonCard, IonButton, IonTitle, IonToolbar, IonInput, IonItem, IonLabel } from '@ionic/vue';
-import { addOutline, trashOutline} from 'ionicons/icons';
-import {useTarefas} from '@/composable/useTarefas';
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonIcon,
+  IonButton,
+  IonTitle,
+  IonToolbar,
+  IonInput
+} from '@ionic/vue';
+import { addOutline } from 'ionicons/icons';
+import CardTarefa from '../components/CardTarefa.vue';
+import { useTarefas } from '../composable/useTarefas';
 
-const { tarefas, adicionar, remover } = useTarefas()
-const novaTarefa = ref('')
+const { filtradas, adicionar, remover, concluir } = useTarefas();
+const novaTarefa = ref('');
+const ionRouter = useIonRouter();
+
 function adicionarNova() {
-  adicionar(novaTarefa.value)
-  novaTarefa.value = ''
+  adicionar(novaTarefa.value);
+  novaTarefa.value = '';
 }
 
-
-
-
-
-
-
-
+function abrirDetalhes(id: number) {
+  ionRouter.push(`/tabs/tarefas/${id}`);
+}
 </script>
+
 <style scoped>
 .tarefa-container {
   padding: 20px;
@@ -99,8 +99,7 @@ ion-input {
 }
 
 .tarefa-item {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 16px;
 }
 
 .vazio {
@@ -111,33 +110,5 @@ ion-input {
 
 .vazio p {
   font-size: 16px;
-}
-
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
 }
 </style>
