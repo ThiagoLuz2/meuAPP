@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { useUsuarioStore } from '../stores/usuario';
+import { alertController } from '@ionic/vue';
 
 const routes = [
   {
@@ -14,7 +15,8 @@ const routes = [
       { path: 'home', component: () => import('../views/HomePage.vue') },
       {
         path: 'perfil',
-        component: () => import('../views/PerfilPage.vue')
+        component: () => import('../views/PerfilPage.vue'),
+        meta: { requerNome: true }
       },
       { path: 'tarefas', component: () => import('../views/TarefasPage.vue') },
       { path: 'tarefas/:id', component: () => import('../views/DetalhesPage.vue') }
@@ -28,10 +30,21 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   const usuStore = useUsuarioStore()
   if (to.meta.requerNome && !usuStore.nome) {
-    next('/tabs/tarefas')
+    // avoid infinite redirect when already navigating to perfil
+    if (to.path === '/tabs/perfil') {
+      next()
+      return
+    }
+    const alert = await alertController.create({
+      header: 'Acesso restrito',
+      message: 'Você precisa informar seu nome no Perfil antes de acessar esta área.',
+      buttons: ['OK']
+    })
+    await alert.present()
+    next('/tabs/perfil')
   } else {
     next()
   }
